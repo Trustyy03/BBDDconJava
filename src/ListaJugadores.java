@@ -16,8 +16,8 @@ import java.util.Scanner;
 */
 public class ListaJugadores {
 
-    static java.sql.Connection con = DBConnection.getConnection("jdbc:mysql://localhost:33060/demo", "chris", "secret");
-
+    static java.sql.Connection con = DBConnection.getConnection("jdbc:mysql://192.168.43.156:33060/demo", "chris", "secret");
+//    static java.sql.Connection con = DBConnection.getConnection("jdbc:mysql://192.168.43.156:33060/demo", "chris", "secret"); //PARA ADRIÁN
     static Scanner inputValue = new Scanner(System.in);
 
     public static void main(String[] args) throws SQLException {
