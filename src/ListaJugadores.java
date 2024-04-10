@@ -1,9 +1,7 @@
-import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 /*0. salir
@@ -47,6 +45,8 @@ public class ListaJugadores {
         System.out.println("4. Dar de alta país");
         System.out.println("5. Dar de baja jugador");
         System.out.println("6. Dar de baja país");
+        System.out.println("7. Modificar jugador");
+        System.out.println("8. Cargar datos de jugadores desde archivo");
     }
 
     public static int obtenerOpcion(){
@@ -58,27 +58,33 @@ public class ListaJugadores {
     public static void ejecutarOpcion(int opcion) throws SQLException {
         switch(opcion){
             case 1:
-                LeerDatosJugadores();
+                leerDatosJugadores();
                 break;
             case 2:
-                LeerDatosPaises();
+                leerDatosPaises();
                 break;
             case 3:
-                DarDeAltaJugador();
+                darDeAltaJugador();
                 break;
             case 4:
-                DarDeAltaPais();
+                darDeAltaPais();
                 break;
             case 5:
-                DarDeBajaJugador();
+                darDeBajaJugador();
                 break;
             case 6:
-                DarDeBajaPais();
+                darDeBajaPais();
+                break;
+            case 7:
+                modificaJugador();
+                break;
+            case 8:
+                cargaJugadoresDesdeArchivo();
                 break;
         }
     }
 
-    private static void DarDeBajaPais() {
+    private static void darDeBajaPais() {
         PreparedStatement st = null;
 
         System.out.print("Código de país que quieres dar de baja: ");
@@ -108,16 +114,16 @@ public class ListaJugadores {
         }
     }
 
-    private static void DarDeBajaJugador() {
+    private static void darDeBajaJugador() {
         PreparedStatement st = null;
 
-        System.out.print("Nombre del jugador que quieres dar de baja: ");
-        String input_nombreJugador = inputValue.next();
+        System.out.print("Introduce el código de jugador que quieres dar de baja: ");
+        String inputCodJugador = inputValue.next();
 
-        String sql = "DELETE FROM JUGADORES WHERE nombre = ?;";
+        String sql = "DELETE FROM JUGADORES WHERE cod_jugador = ?;";
         try {
             st = con.prepareStatement(sql);
-            st.setString(1, input_nombreJugador);
+            st.setString(1, inputCodJugador);
 
             st.executeUpdate();
             System.out.println("----------------------------------------\n" +
@@ -139,7 +145,7 @@ public class ListaJugadores {
     }
 
 
-    public static void LeerDatosJugadores() throws SQLException {
+    public static void leerDatosJugadores() throws SQLException {
 
         Statement st = con.createStatement();
 
@@ -148,21 +154,22 @@ public class ListaJugadores {
         ResultSet rs_JugadoresAll = st.executeQuery(JugadoresAll);
 
         System.out.println();
-        System.out.printf("|%20s|%20s|%20s|%20s|%20s|%n", "[Código País]", "[Nombre Jugador]", "[Año Nacimiento]", "[Altura]", "[Club]");
+        System.out.printf("|%20s|%20s|%20s|%20s|%20s|%20s|%n", "[Código Jugador]","[Código País]", "[Nombre Jugador]", "[Año Nacimiento]", "[Altura]", "[Club]");
         while (rs_JugadoresAll.next()){
+            int codJugador = rs_JugadoresAll.getInt("cod_jugador");
             int codPais = rs_JugadoresAll.getInt("cod_pais");
             String nombreJugador = rs_JugadoresAll.getString("nombre");
             String anyoNacimiento = rs_JugadoresAll.getString("anyoNacimiento");
             int altura = rs_JugadoresAll.getInt("altura");
             String club = rs_JugadoresAll.getString("club");
 
-            System.out.printf("|%20s|%20s|%20s|%20s|%20s|%n", codPais, nombreJugador, anyoNacimiento, altura, club);
+            System.out.printf("|%20s|%20s|%20s|%20s|%20s|%20s|%n", codJugador,codPais, nombreJugador, anyoNacimiento, altura, club);
         }
         System.out.println();
 
         st.close();
     }
-    public static void LeerDatosPaises() throws SQLException {
+    public static void leerDatosPaises() throws SQLException {
 
         Statement st = con.createStatement();
 
@@ -183,7 +190,7 @@ public class ListaJugadores {
 
         st.close();
     }
-    public static void DarDeAltaJugador() {
+    public static void darDeAltaJugador() {
 
         PreparedStatement st = null;
 
@@ -226,7 +233,7 @@ public class ListaJugadores {
             }
         }
     }
-    private static void DarDeAltaPais() {
+    private static void darDeAltaPais() {
         PreparedStatement st = null;
 
         System.out.print("Código de país: ");
@@ -257,6 +264,58 @@ public class ListaJugadores {
                 System.out.println("No se ha podido cerrar el Statement por alguna razón");
             }
         }
+    }
+    public static void modificaJugador(){
+        PreparedStatement st = null;
+
+        System.out.print("Introduce el código de jugador que quieres modificar: ");
+        int inputCodJugador = inputValue.nextInt();
+
+        System.out.print("Código de país: ");
+        int input_cod_pais = inputValue.nextInt();
+        System.out.print("Nombre: ");
+        String input_nombre = inputValue.next();
+        System.out.print("Año de nacimiento: ");
+        int input_anyoNacimiento = inputValue.nextInt();
+        System.out.print("Altura: ");
+        int input_altura = inputValue.nextInt();
+        System.out.print("Club: ");
+        String input_club = inputValue.next();
+
+
+        String sql = "UPDATE TABLE JUGADORES SET cod_pais = ?, nombre = ?, anyoNacimiento = ?, altura = ?, club = ? where cod_jugador = ?;";
+
+        try {
+            st = con.prepareStatement(sql);
+
+            st.setInt(6, inputCodJugador);
+            st.setInt(1, input_cod_pais);
+            st.setString(2, input_nombre);
+            st.setInt(3,input_anyoNacimiento);
+            st.setInt(4,input_altura);
+            st.setString(5,input_club);
+
+            st.executeUpdate(); //TODO probar con excuteQuery();
+
+            System.out.println("----------------------------------------\n" +
+                    "|¡Se ha modificado el jugador con éxito!|\n" +
+                    "----------------------------------------");
+            System.out.println();
+
+        } catch (SQLException e){
+            System.out.println("Error: " + e.getMessage());
+        } finally {
+            try {
+                if (st != null && !st.isClosed()){
+                    st.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("No se ha podido cerrar el Statement por alguna razón");
+            }
+        }
+    }
+    public static void cargaJugadoresDesdeArchivo(){
+
     }
 
 

@@ -1,9 +1,11 @@
 public class Jugador {
-    public int codPais;
-    public String nomJugador;
-    public int fechaNacimiento;
-    public float alturaJugador;
-    public String clubJugador;
+    private int codJugador;
+    private int codPais;
+    private String nomJugador;
+    private int fechaNacimiento;
+    private float alturaJugador;
+    private String clubJugador;
+
 
 
     public Jugador( int codPais, String nomJugador, int fechaNacimiento, float alturaJugador, String clubJugador){
@@ -14,4 +16,43 @@ public class Jugador {
         this.clubJugador = clubJugador;
     }
 
+    public int getCodPais() {
+        return codPais;
+    }
+
+    public void setCodPais(int codPais) {
+        this.codPais = codPais;
+    }
+
+    public String getNomJugador() {
+        return nomJugador;
+    }
+
+    public void setNomJugador(String nomJugador) {
+        this.nomJugador = nomJugador;
+    }
+
+    public int getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(int fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public float getAlturaJugador() {
+        return alturaJugador;
+    }
+
+    public void setAlturaJugador(float alturaJugador) {
+        this.alturaJugador = alturaJugador;
+    }
+
+    public String getClubJugador() {
+        return clubJugador;
+    }
+
+    public void setClubJugador(String clubJugador) {
+        this.clubJugador = clubJugador;
+    }
 }
