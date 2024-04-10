@@ -266,7 +266,8 @@ public class ListaJugadores {
         }
     }
     public static void modificaJugador(){
-        PreparedStatement st = null;
+        PreparedStatement pst = null;
+        Statement st = null;
 
         System.out.print("Introduce el código de jugador que quieres modificar: ");
         int inputCodJugador = inputValue.nextInt();
@@ -283,19 +284,21 @@ public class ListaJugadores {
         String input_club = inputValue.next();
 
 
-        String sql = "UPDATE TABLE JUGADORES SET cod_pais = ?, nombre = ?, anyoNacimiento = ?, altura = ?, club = ? where cod_jugador = ?;";
+        String sql = "UPDATE JUGADORES SET cod_pais = ?, nombre = ?, anyoNacimiento = ?, altura = ?, club = ? where cod_jugador = ?;";
 
         try {
-            st = con.prepareStatement(sql);
 
-            st.setInt(6, inputCodJugador);
-            st.setInt(1, input_cod_pais);
-            st.setString(2, input_nombre);
-            st.setInt(3,input_anyoNacimiento);
-            st.setInt(4,input_altura);
-            st.setString(5,input_club);
+            pst = con.prepareStatement(sql);
 
-            st.executeUpdate(); //TODO probar con excuteQuery();
+            pst.setInt(6, inputCodJugador);
+            pst.setInt(1, input_cod_pais);
+            pst.setString(2, input_nombre);
+            pst.setInt(3,input_anyoNacimiento);
+            pst.setInt(4,input_altura);
+            pst.setString(5,input_club);
+
+            pst.executeUpdate();
+
 
             System.out.println("----------------------------------------\n" +
                     "|¡Se ha modificado el jugador con éxito!|\n" +
@@ -306,8 +309,8 @@ public class ListaJugadores {
             System.out.println("Error: " + e.getMessage());
         } finally {
             try {
-                if (st != null && !st.isClosed()){
-                    st.close();
+                if (pst != null && !pst.isClosed()){
+                    pst.close();
                 }
             } catch (SQLException e) {
                 System.out.println("No se ha podido cerrar el Statement por alguna razón");
