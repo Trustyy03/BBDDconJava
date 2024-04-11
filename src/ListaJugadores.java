@@ -158,17 +158,16 @@ public class ListaJugadores {
         ResultSet rs_JugadoresAll = st.executeQuery(JugadoresAll);
 
         System.out.println();
-        System.out.printf("|%20s|%20s|%20s|%20s|%20s|%20s|%20s|%n", "[Código Jugador]","[Código País]", "[Nacionalidad]","[Nombre Jugador]", "[Año Nacimiento]", "[Altura]", "[Club]");
+        System.out.printf("|%20s|%20s|%20s|%20s|%20s|%20s|%n", "[Código Jugador]","[Código País]","[Nombre Jugador]", "[Año Nacimiento]", "[Altura]", "[Club]");
         while (rs_JugadoresAll.next()){
             int codJugador = rs_JugadoresAll.getInt("cod_jugador");
             int codPais = rs_JugadoresAll.getInt("cod_pais");
-            String nacionalidad = rs_JugadoresAll.getString(("nacionalidad"));
             String nombreJugador = rs_JugadoresAll.getString("nombre");
             String anyoNacimiento = rs_JugadoresAll.getString("anyoNacimiento");
             int altura = rs_JugadoresAll.getInt("altura");
             String club = rs_JugadoresAll.getString("club");
 
-            System.out.printf("|%20s|%20s|%20s|%20s|%20s|%20s|%20s|%n", codJugador,codPais,nacionalidad, nombreJugador, anyoNacimiento, altura, club);
+            System.out.printf("|%20s|%20s|%20s|%20s|%20s|%20s|%n", codJugador,codPais, nombreJugador, anyoNacimiento, altura, club);
         }
         System.out.println();
 

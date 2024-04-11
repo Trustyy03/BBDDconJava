@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5bb33cf1-3c14-4b5a-9a90-258cbf02a963" name="Changes" comment="Commit desde casa, falta arreglar modificar jugador y terminar volcado desde .dat">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="5bb33cf1-3c14-4b5a-9a90-258cbf02a963" name="Changes" comment="falta pulir introducir jugador">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Jugador.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Jugador.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ListaJugadores.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ListaJugadores.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -93,7 +90,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712748279205</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="falta pulir introducir jugador">
+      <option name="closed" value="true" />
+      <created>1712845338728</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1712845338728</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -111,6 +116,7 @@
     <MESSAGE value="1r commit" />
     <MESSAGE value="Primer commit" />
     <MESSAGE value="Commit desde casa, falta arreglar modificar jugador y terminar volcado desde .dat" />
-    <option name="LAST_COMMIT_MESSAGE" value="Commit desde casa, falta arreglar modificar jugador y terminar volcado desde .dat" />
+    <MESSAGE value="falta pulir introducir jugador" />
+    <option name="LAST_COMMIT_MESSAGE" value="falta pulir introducir jugador" />
   </component>
 </project>
