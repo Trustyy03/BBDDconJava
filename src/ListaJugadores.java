@@ -1,8 +1,13 @@
+import java.io.*;
+import java.nio.Buffer;
+import java.nio.charset.StandardCharsets;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
+
+import static java.io.DataInputStream.readUTF;
 
 /*0. salir
 * 1. cargar datos iniciales
@@ -18,7 +23,7 @@ public class ListaJugadores {
 //    static java.sql.Connection con = DBConnection.getConnection("jdbc:mysql://192.168.43.156:33060/demo", "chris", "secret"); //PARA ADRIÁN
     static Scanner inputValue = new Scanner(System.in);
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, IOException {
 
 
         boolean fin = false;
@@ -55,7 +60,7 @@ public class ListaJugadores {
         return inputValue.nextInt();
     }
 
-    public static void ejecutarOpcion(int opcion) throws SQLException {
+    public static void ejecutarOpcion(int opcion) throws SQLException, IOException {
         switch(opcion){
             case 1:
                 leerDatosJugadores();
@@ -317,7 +322,33 @@ public class ListaJugadores {
             }
         }
     }
-    public static void cargaJugadoresDesdeArchivo(){
+    public static void cargaJugadoresDesdeArchivo() throws IOException {
+
+        //String cadena;
+        DataInputStream f = new DataInputStream(new FileInputStream("./src/jugadoresAdri.dat"));
+
+
+        while (f.available()>0){
+            System.out.println("Código País: " + f.readInt());
+            System.out.println("Nacionalidad: " + f.readUTF());
+            System.out.println("Nombre: " + f.readUTF());
+            System.out.println("Año nacimiento: " + f.readInt());
+            System.out.println("Altura: " + f.readFloat());
+            System.out.println("Equipo: " + f.readUTF());
+            System.out.println();
+
+        }
+        f.close();
+
+        /*
+        FileReader equipo = new FileReader("./src/equipo.dat");
+        BufferedReader prueba = new BufferedReader(equipo);
+        while((cadena = prueba.readLine())!=null){
+            System.out.println(cadena);
+        }
+        prueba.close();*/
+
+
 
     }
 
