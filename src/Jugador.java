@@ -6,10 +6,17 @@ public class Jugador {
     private float alturaJugador;
     private String clubJugador;
 
+    public String getNacionalidad() {
+        return nacionalidad;
+    }
+
+    private String nacionalidad;
 
 
-    public Jugador( int codPais, String nomJugador, int fechaNacimiento, float alturaJugador, String clubJugador){
+
+    public Jugador(int codPais, String nacionalidad, String nomJugador, int fechaNacimiento, float alturaJugador, String clubJugador){
         this.codPais = codPais;
+        this.nacionalidad = nacionalidad;
         this.nomJugador = nomJugador;
         this.fechaNacimiento = fechaNacimiento;
         this.alturaJugador = alturaJugador;

@@ -1,13 +1,12 @@
-import java.io.*;
-import java.nio.Buffer;
-import java.nio.charset.StandardCharsets;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Scanner;
-
-import static java.io.DataInputStream.readUTF;
 
 /*0. salir
 * 1. cargar datos iniciales
@@ -159,16 +158,17 @@ public class ListaJugadores {
         ResultSet rs_JugadoresAll = st.executeQuery(JugadoresAll);
 
         System.out.println();
-        System.out.printf("|%20s|%20s|%20s|%20s|%20s|%20s|%n", "[Código Jugador]","[Código País]", "[Nombre Jugador]", "[Año Nacimiento]", "[Altura]", "[Club]");
+        System.out.printf("|%20s|%20s|%20s|%20s|%20s|%20s|%20s|%n", "[Código Jugador]","[Código País]", "[Nacionalidad]","[Nombre Jugador]", "[Año Nacimiento]", "[Altura]", "[Club]");
         while (rs_JugadoresAll.next()){
             int codJugador = rs_JugadoresAll.getInt("cod_jugador");
             int codPais = rs_JugadoresAll.getInt("cod_pais");
+            String nacionalidad = rs_JugadoresAll.getString(("nacionalidad"));
             String nombreJugador = rs_JugadoresAll.getString("nombre");
             String anyoNacimiento = rs_JugadoresAll.getString("anyoNacimiento");
             int altura = rs_JugadoresAll.getInt("altura");
             String club = rs_JugadoresAll.getString("club");
 
-            System.out.printf("|%20s|%20s|%20s|%20s|%20s|%20s|%n", codJugador,codPais, nombreJugador, anyoNacimiento, altura, club);
+            System.out.printf("|%20s|%20s|%20s|%20s|%20s|%20s|%20s|%n", codJugador,codPais,nacionalidad, nombreJugador, anyoNacimiento, altura, club);
         }
         System.out.println();
 
@@ -323,22 +323,56 @@ public class ListaJugadores {
         }
     }
     public static void cargaJugadoresDesdeArchivo() throws IOException {
+        ArrayList<Jugador> jugadores = new ArrayList<>();
 
         //String cadena;
-        DataInputStream f = new DataInputStream(new FileInputStream("./src/jugadoresAdri.dat"));
+        DataInputStream f = new DataInputStream(new FileInputStream("./src/jugadores.dat"));
 
 
-        while (f.available()>0){
-            System.out.println("Código País: " + f.readInt());
-            System.out.println("Nacionalidad: " + f.readUTF());
-            System.out.println("Nombre: " + f.readUTF());
-            System.out.println("Año nacimiento: " + f.readInt());
-            System.out.println("Altura: " + f.readFloat());
-            System.out.println("Equipo: " + f.readUTF());
-            System.out.println();
+        while (f.available()>0) {
 
+            jugadores.add(new Jugador(f.readInt(), f.readUTF(), f.readUTF(), f.readInt(), f.readFloat(), f.readUTF()));
         }
         f.close();
+
+            PreparedStatement st = null;
+
+            String sql = "INSERT INTO JUGADORES (cod_pais, nacionalidad, nombre, anyoNacimiento, altura, club) VALUES (?,?,?,?,?,?);";
+
+            for(Jugador j : jugadores){
+
+
+                try {
+
+                    st = con.prepareStatement(sql);
+                    st.setInt(1, j.getCodPais());
+                    st.setString(2, j.getNacionalidad());
+                    st.setString(3, j.getNomJugador());
+                    st.setInt(4, j.getFechaNacimiento());
+                    st.setFloat(5, j.getAlturaJugador());
+                    st.setString(6, j.getClubJugador());
+
+                    st.executeUpdate();
+
+
+                } catch (SQLException e){
+                    System.out.println("Error: " + e.getMessage());
+                } finally {
+                    try {
+                        if (st != null && !st.isClosed()){
+                            st.close();
+                        }
+                    } catch (SQLException e) {
+                        System.out.println("No se ha podido cerrar el Statement por alguna razón");
+                    }
+                }
+            }
+        System.out.println("----------------------------------------\n" +
+                "|¡Se han insertado los jugadores con éxito!|\n" +
+                "----------------------------------------");
+        System.out.println();
+        }
+
 
         /*
         FileReader equipo = new FileReader("./src/equipo.dat");
@@ -358,4 +392,4 @@ public class ListaJugadores {
 
 
 
-}
+
