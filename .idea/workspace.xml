@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5bb33cf1-3c14-4b5a-9a90-258cbf02a963" name="Changes" comment="falta pulir introducir jugador">
+    <list default="true" id="5bb33cf1-3c14-4b5a-9a90-258cbf02a963" name="Changes" comment="Terminado">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ListaJugadores.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ListaJugadores.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Test.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +20,20 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Marxtinez"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="bca181e2-c949-4990-8e0f-c8dc5757bbb7" />
+        <option name="url" value="https://github.com/Trustyy03/BBDDconJava.git" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -98,7 +112,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712845338728</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Terminado">
+      <option name="closed" value="true" />
+      <created>1712846005261</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1712846005262</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -117,6 +139,7 @@
     <MESSAGE value="Primer commit" />
     <MESSAGE value="Commit desde casa, falta arreglar modificar jugador y terminar volcado desde .dat" />
     <MESSAGE value="falta pulir introducir jugador" />
-    <option name="LAST_COMMIT_MESSAGE" value="falta pulir introducir jugador" />
+    <MESSAGE value="Terminado" />
+    <option name="LAST_COMMIT_MESSAGE" value="Terminado" />
   </component>
 </project>

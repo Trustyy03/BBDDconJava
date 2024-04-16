@@ -1,0 +1,211 @@
+Index: src/ListaJugadores.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import java.sql.PreparedStatement;\r\nimport java.sql.ResultSet;\r\nimport java.sql.SQLException;\r\nimport java.sql.Statement;\r\nimport java.util.Scanner;\r\n\r\n/*0. salir\r\n* 1. cargar datos iniciales\r\n* 2. mostrar datos\r\n* 3. guardar datos.\r\n* 4. borrar datos.\r\n* 5. Incorporar datos de fichero.\r\n* 6. Ordenar datos.\r\n*/\r\npublic class ListaJugadores {\r\n\r\n    static java.sql.Connection con = DBConnection.getConnection(\"jdbc:mysql://192.168.43.156:33060/demo\", \"chris\", \"secret\");\r\n//    static java.sql.Connection con = DBConnection.getConnection(\"jdbc:mysql://192.168.43.156:33060/demo\", \"chris\", \"secret\"); //PARA ADRIÁN\r\n    static Scanner inputValue = new Scanner(System.in);\r\n\r\n    public static void main(String[] args) throws SQLException {\r\n\r\n\r\n        boolean fin = false;\r\n        while (!fin) {\r\n            menu();\r\n            int valor = obtenerOpcion();\r\n            if (valor != 0) {\r\n                ejecutarOpcion(valor);\r\n            } else {\r\n                System.out.println(\"Seguro que quieres salir?(Y/n)\");\r\n                String respuesta = inputValue.next();\r\n                if (respuesta.equalsIgnoreCase(\"y\") || respuesta.equalsIgnoreCase(\"yes\") || respuesta.equalsIgnoreCase(\"ye\")) {\r\n                    fin = true;\r\n                }\r\n            }\r\n        }\r\n    }\r\n\r\n    public static void menu(){\r\n        System.out.println(\"0. Salir\");\r\n        System.out.println(\"1. Mostrar datos Jugadores\");\r\n        System.out.println(\"2. Mostrar datos Países\");\r\n        System.out.println(\"3. Dar de alta jugador\");\r\n        System.out.println(\"4. Dar de alta país\");\r\n        System.out.println(\"5. Dar de baja jugador\");\r\n        System.out.println(\"6. Dar de baja país\");\r\n        System.out.println(\"7. Modificar jugador\");\r\n        System.out.println(\"8. Cargar datos de jugadores desde archivo\");\r\n    }\r\n\r\n    public static int obtenerOpcion(){\r\n        Scanner inputValue = new Scanner(System.in);\r\n        System.out.println(\"Dame una opción: \");\r\n        return inputValue.nextInt();\r\n    }\r\n\r\n    public static void ejecutarOpcion(int opcion) throws SQLException {\r\n        switch(opcion){\r\n            case 1:\r\n                leerDatosJugadores();\r\n                break;\r\n            case 2:\r\n                leerDatosPaises();\r\n                break;\r\n            case 3:\r\n                darDeAltaJugador();\r\n                break;\r\n            case 4:\r\n                darDeAltaPais();\r\n                break;\r\n            case 5:\r\n                darDeBajaJugador();\r\n                break;\r\n            case 6:\r\n                darDeBajaPais();\r\n                break;\r\n            case 7:\r\n                modificaJugador();\r\n                break;\r\n            case 8:\r\n                cargaJugadoresDesdeArchivo();\r\n                break;\r\n        }\r\n    }\r\n\r\n    private static void darDeBajaPais() {\r\n        PreparedStatement st = null;\r\n\r\n        System.out.print(\"Código de país que quieres dar de baja: \");\r\n        int input_cod_pais = inputValue.nextInt();\r\n\r\n        String sql = \"DELETE FROM PAISES WHERE cod_pais = ?;\";\r\n        try {\r\n            st = con.prepareStatement(sql);\r\n            st.setInt(1, input_cod_pais);\r\n\r\n            st.executeUpdate();\r\n            System.out.println(\"-------------------------------------\\n\" +\r\n                               \"|¡Se ha eliminado el país con éxito!|\\n\" +\r\n                               \"-------------------------------------\");\r\n            System.out.println();\r\n\r\n        } catch (SQLException e){\r\n            System.out.println(\"Error: \" + e.getMessage());\r\n        } finally {\r\n            try {\r\n                if (st != null && !st.isClosed()){\r\n                    st.close();\r\n                }\r\n            } catch (SQLException e) {\r\n                System.out.println(\"No se ha podido cerrar el Statement por alguna razón\");\r\n            }\r\n        }\r\n    }\r\n\r\n    private static void darDeBajaJugador() {\r\n        PreparedStatement st = null;\r\n\r\n        System.out.print(\"Introduce el código de jugador que quieres dar de baja: \");\r\n        String inputCodJugador = inputValue.next();\r\n\r\n        String sql = \"DELETE FROM JUGADORES WHERE cod_jugador = ?;\";\r\n        try {\r\n            st = con.prepareStatement(sql);\r\n            st.setString(1, inputCodJugador);\r\n\r\n            st.executeUpdate();\r\n            System.out.println(\"----------------------------------------\\n\" +\r\n                               \"|¡Se ha eliminado el jugador con éxito!|\\n\" +\r\n                               \"----------------------------------------\");\r\n            System.out.println();\r\n\r\n        } catch (SQLException e){\r\n            System.out.println(\"Error: \" + e.getMessage());\r\n        } finally {\r\n            try {\r\n                if (st != null && !st.isClosed()){\r\n                    st.close();\r\n                }\r\n            } catch (SQLException e) {\r\n                System.out.println(\"No se ha podido cerrar el Statement por alguna razón\");\r\n            }\r\n        }\r\n    }\r\n\r\n\r\n    public static void leerDatosJugadores() throws SQLException {\r\n\r\n        Statement st = con.createStatement();\r\n\r\n        String JugadoresAll = \"SELECT * FROM JUGADORES\";\r\n\r\n        ResultSet rs_JugadoresAll = st.executeQuery(JugadoresAll);\r\n\r\n        System.out.println();\r\n        System.out.printf(\"|%20s|%20s|%20s|%20s|%20s|%20s|%n\", \"[Código Jugador]\",\"[Código País]\", \"[Nombre Jugador]\", \"[Año Nacimiento]\", \"[Altura]\", \"[Club]\");\r\n        while (rs_JugadoresAll.next()){\r\n            int codJugador = rs_JugadoresAll.getInt(\"cod_jugador\");\r\n            int codPais = rs_JugadoresAll.getInt(\"cod_pais\");\r\n            String nombreJugador = rs_JugadoresAll.getString(\"nombre\");\r\n            String anyoNacimiento = rs_JugadoresAll.getString(\"anyoNacimiento\");\r\n            int altura = rs_JugadoresAll.getInt(\"altura\");\r\n            String club = rs_JugadoresAll.getString(\"club\");\r\n\r\n            System.out.printf(\"|%20s|%20s|%20s|%20s|%20s|%20s|%n\", codJugador,codPais, nombreJugador, anyoNacimiento, altura, club);\r\n        }\r\n        System.out.println();\r\n\r\n        st.close();\r\n    }\r\n    public static void leerDatosPaises() throws SQLException {\r\n\r\n        Statement st = con.createStatement();\r\n\r\n        String PaisesAll = \"SELECT * FROM PAISES\";\r\n\r\n        ResultSet rs_PaisesAll = st.executeQuery(PaisesAll);\r\n\r\n\r\n        System.out.println();\r\n        System.out.printf(\"|%13s|%13s|%n\", \"[Código País]\", \"[Nombre País]\");\r\n        while (rs_PaisesAll.next()){\r\n            int codPais = rs_PaisesAll.getInt(\"cod_pais\");\r\n            String nombrePais = rs_PaisesAll.getString(\"nombrePais\");\r\n\r\n            System.out.printf(\"|%13s|%13s|%n\", codPais, nombrePais);\r\n        }\r\n        System.out.println();\r\n\r\n        st.close();\r\n    }\r\n    public static void darDeAltaJugador() {\r\n\r\n        PreparedStatement st = null;\r\n\r\n        System.out.print(\"Código de país: \");\r\n        int input_cod_pais = inputValue.nextInt();\r\n        System.out.print(\"Nombre: \");\r\n        String input_nombre = inputValue.next();\r\n        System.out.print(\"Año de nacimiento: \");\r\n        int input_anyoNacimiento = inputValue.nextInt();\r\n        System.out.print(\"Altura: \");\r\n        int input_altura = inputValue.nextInt();\r\n        System.out.print(\"Club: \");\r\n        String input_club = inputValue.next();\r\n\r\n        String sql = \"INSERT INTO JUGADORES (cod_pais, nombre, anyoNacimiento, altura, club) VALUES (?,?,?,?,?);\";\r\n        try {\r\n        st = con.prepareStatement(sql);\r\n        st.setInt(1, input_cod_pais);\r\n        st.setString(2, input_nombre);\r\n        st.setInt(3, input_anyoNacimiento);\r\n        st.setInt(4, input_altura);\r\n        st.setString(5, input_club);\r\n\r\n        st.executeUpdate();\r\n            System.out.println(\"----------------------------------------\\n\" +\r\n                               \"|¡Se ha insertado el jugador con éxito!|\\n\" +\r\n                               \"----------------------------------------\");\r\n            System.out.println();\r\n\r\n\r\n    } catch (SQLException e){\r\n        System.out.println(\"Error: \" + e.getMessage());\r\n    } finally {\r\n            try {\r\n                if (st != null && !st.isClosed()){\r\n                    st.close();\r\n                }\r\n            } catch (SQLException e) {\r\n                System.out.println(\"No se ha podido cerrar el Statement por alguna razón\");\r\n            }\r\n        }\r\n    }\r\n    private static void darDeAltaPais() {\r\n        PreparedStatement st = null;\r\n\r\n        System.out.print(\"Código de país: \");\r\n        int input_cod_pais = inputValue.nextInt();\r\n        System.out.print(\"Nombre país: \");\r\n        String input_nombre = inputValue.next();\r\n\r\n        String sql = \"INSERT INTO PAISES (cod_pais, nombrePais) VALUES (?,?);\";\r\n        try {\r\n            st = con.prepareStatement(sql);\r\n            st.setInt(1, input_cod_pais);\r\n            st.setString(2, input_nombre);\r\n\r\n            st.executeUpdate();\r\n            System.out.println(\"-------------------------------------\\n\" +\r\n                               \"|¡Se ha insertado el país con éxito!|\\n\" +\r\n                               \"-------------------------------------\");\r\n            System.out.println(\"Se ha insertado el país con éxito\");\r\n\r\n        } catch (SQLException e){\r\n            System.out.println(\"Error: \" + e.getMessage());\r\n        } finally {\r\n            try {\r\n                if (st != null && !st.isClosed()){\r\n                    st.close();\r\n                }\r\n            } catch (SQLException e) {\r\n                System.out.println(\"No se ha podido cerrar el Statement por alguna razón\");\r\n            }\r\n        }\r\n    }\r\n    public static void modificaJugador(){\r\n        PreparedStatement pst = null;\r\n        Statement st = null;\r\n\r\n        System.out.print(\"Introduce el código de jugador que quieres modificar: \");\r\n        int inputCodJugador = inputValue.nextInt();\r\n\r\n        System.out.print(\"Código de país: \");\r\n        int input_cod_pais = inputValue.nextInt();\r\n        System.out.print(\"Nombre: \");\r\n        String input_nombre = inputValue.next();\r\n        System.out.print(\"Año de nacimiento: \");\r\n        int input_anyoNacimiento = inputValue.nextInt();\r\n        System.out.print(\"Altura: \");\r\n        int input_altura = inputValue.nextInt();\r\n        System.out.print(\"Club: \");\r\n        String input_club = inputValue.next();\r\n\r\n\r\n        String sql = \"UPDATE JUGADORES SET cod_pais = ?, nombre = ?, anyoNacimiento = ?, altura = ?, club = ? where cod_jugador = ?;\";\r\n\r\n        try {\r\n\r\n            pst = con.prepareStatement(sql);\r\n\r\n            pst.setInt(6, inputCodJugador);\r\n            pst.setInt(1, input_cod_pais);\r\n            pst.setString(2, input_nombre);\r\n            pst.setInt(3,input_anyoNacimiento);\r\n            pst.setInt(4,input_altura);\r\n            pst.setString(5,input_club);\r\n\r\n            pst.executeUpdate();\r\n\r\n\r\n            System.out.println(\"----------------------------------------\\n\" +\r\n                    \"|¡Se ha modificado el jugador con éxito!|\\n\" +\r\n                    \"----------------------------------------\");\r\n            System.out.println();\r\n\r\n        } catch (SQLException e){\r\n            System.out.println(\"Error: \" + e.getMessage());\r\n        } finally {\r\n            try {\r\n                if (pst != null && !pst.isClosed()){\r\n                    pst.close();\r\n                }\r\n            } catch (SQLException e) {\r\n                System.out.println(\"No se ha podido cerrar el Statement por alguna razón\");\r\n            }\r\n        }\r\n    }\r\n    public static void cargaJugadoresDesdeArchivo(){\r\n\r\n    }\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/ListaJugadores.java b/src/ListaJugadores.java
+--- a/src/ListaJugadores.java	(revision a354bf5eac755855faaa331ba403bd56de4123e4)
++++ b/src/ListaJugadores.java	(date 1712842699591)
+@@ -1,7 +1,9 @@
++import java.io.*;
+ import java.sql.PreparedStatement;
+ import java.sql.ResultSet;
+ import java.sql.SQLException;
+ import java.sql.Statement;
++import java.util.ArrayList;
+ import java.util.Scanner;
+ 
+ /*0. salir
+@@ -317,8 +319,59 @@
+             }
+         }
+     }
+-    public static void cargaJugadoresDesdeArchivo(){
+-
++    public static void cargaJugadoresDesdeArchivo() throws IOException {
++
++
++        DataInputStream flujoEntrada = new DataInputStream(new FileInputStream(new File("./equipo.dat")));
++
++        ArrayList<Jugador> jugadores = new ArrayList<>();
++
++        String sql = "INSERT INTO JUGADORES (cod_pais, nombre, anyoNacimiento, altura, club) VALUES (?,?,?,?,?);";
++
++        while (flujoEntrada.available()>0){
++            jugadores.add(new Jugador(flujoEntrada.readInt(), flujoEntrada.readUTF(), flujoEntrada.readUTF(),flujoEntrada.readInt(), flujoEntrada.readFloat(), flujoEntrada.readUTF()));
++
++
++
++
++
++
++        PreparedStatement st = null;
++
++
++        int input_cod_pais = inputValue.nextInt();
++        String input_nombre = inputValue.next();
++        int input_anyoNacimiento = inputValue.nextInt();
++        int input_altura = inputValue.nextInt();
++        String input_club = inputValue.next();
++
++        String sql = "INSERT INTO JUGADORES (cod_pais, nombre, anyoNacimiento, altura, club) VALUES (?,?,?,?,?);";
++        try {
++            st = con.prepareStatement(sql);
++            st.setInt(1, input_cod_pais);
++            st.setString(2, input_nombre);
++            st.setInt(3, input_anyoNacimiento);
++            st.setInt(4, input_altura);
++            st.setString(5, input_club);
++
++            st.executeUpdate();
++            System.out.println("----------------------------------------\n" +
++                    "|¡Se ha insertado el jugador con éxito!|\n" +
++                    "----------------------------------------");
++            System.out.println();
++
++
++        } catch (SQLException e){
++            System.out.println("Error: " + e.getMessage());
++        } finally {
++            try {
++                if (st != null && !st.isClosed()){
++                    st.close();
++                }
++            } catch (SQLException e) {
++                System.out.println("No se ha podido cerrar el Statement por alguna razón");
++            }
++        }
+     }
+ 
+ 
+Index: src/Jugador.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>public class Jugador {\r\n    private int codJugador;\r\n    private int codPais;\r\n    private String nomJugador;\r\n    private int fechaNacimiento;\r\n    private float alturaJugador;\r\n    private String clubJugador;\r\n\r\n\r\n\r\n    public Jugador( int codPais, String nomJugador, int fechaNacimiento, float alturaJugador, String clubJugador){\r\n        this.codPais = codPais;\r\n        this.nomJugador = nomJugador;\r\n        this.fechaNacimiento = fechaNacimiento;\r\n        this.alturaJugador = alturaJugador;\r\n        this.clubJugador = clubJugador;\r\n    }\r\n\r\n    public int getCodPais() {\r\n        return codPais;\r\n    }\r\n\r\n    public void setCodPais(int codPais) {\r\n        this.codPais = codPais;\r\n    }\r\n\r\n    public String getNomJugador() {\r\n        return nomJugador;\r\n    }\r\n\r\n    public void setNomJugador(String nomJugador) {\r\n        this.nomJugador = nomJugador;\r\n    }\r\n\r\n    public int getFechaNacimiento() {\r\n        return fechaNacimiento;\r\n    }\r\n\r\n    public void setFechaNacimiento(int fechaNacimiento) {\r\n        this.fechaNacimiento = fechaNacimiento;\r\n    }\r\n\r\n    public float getAlturaJugador() {\r\n        return alturaJugador;\r\n    }\r\n\r\n    public void setAlturaJugador(float alturaJugador) {\r\n        this.alturaJugador = alturaJugador;\r\n    }\r\n\r\n    public String getClubJugador() {\r\n        return clubJugador;\r\n    }\r\n\r\n    public void setClubJugador(String clubJugador) {\r\n        this.clubJugador = clubJugador;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Jugador.java b/src/Jugador.java
+--- a/src/Jugador.java	(revision a354bf5eac755855faaa331ba403bd56de4123e4)
++++ b/src/Jugador.java	(date 1712842471060)
+@@ -8,7 +8,7 @@
+ 
+ 
+ 
+-    public Jugador( int codPais, String nomJugador, int fechaNacimiento, float alturaJugador, String clubJugador){
++    public Jugador(int codPais, String nomJugador, String s, int fechaNacimiento, float alturaJugador, String clubJugador){
+         this.codPais = codPais;
+         this.nomJugador = nomJugador;
+         this.fechaNacimiento = fechaNacimiento;
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"5bb33cf1-3c14-4b5a-9a90-258cbf02a963\" name=\"Changes\" comment=\"Commit desde casa, falta arreglar modificar jugador y terminar volcado desde .dat\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/ListaJugadores.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/ListaJugadores.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"main\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 8\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2es4EFa4ipEEyk4nHwUublU6L5P\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;Application.ListaJugadores.executor&quot;: &quot;Run&quot;,\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;master&quot;,\r\n    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/adri_/Downloads/mysql-connector-j-8.3.0/mysql-connector-j-8.3.0/mysql-connector-j-8.3.0.jar&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"ListaJugadores\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"ListaJugadores\" />\r\n      <module name=\"BBDDconJava\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Application.ListaJugadores\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"jdk-22-openjdk-22-3183f394aec4-bad0321e\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"5bb33cf1-3c14-4b5a-9a90-258cbf02a963\" name=\"Changes\" comment=\"\" />\r\n      <created>1712679837989</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1712679837989</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Primer commit\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1712682658514</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1712682658514</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"Commit desde casa, falta arreglar modificar jugador y terminar volcado desde .dat\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1712748279205</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1712748279205</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"3\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"1r commit\" />\r\n    <MESSAGE value=\"Primer commit\" />\r\n    <MESSAGE value=\"Commit desde casa, falta arreglar modificar jugador y terminar volcado desde .dat\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Commit desde casa, falta arreglar modificar jugador y terminar volcado desde .dat\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision a354bf5eac755855faaa331ba403bd56de4123e4)
++++ b/.idea/workspace.xml	(date 1712843431897)
+@@ -4,8 +4,10 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="5bb33cf1-3c14-4b5a-9a90-258cbf02a963" name="Changes" comment="Commit desde casa, falta arreglar modificar jugador y terminar volcado desde .dat">
++    <list default="true" id="5bb33cf1-3c14-4b5a-9a90-258cbf02a963" name="Changes" comment="ahora funciona modificar">
++      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/Jugador.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Jugador.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/ListaJugadores.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ListaJugadores.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+@@ -30,20 +32,20 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;Application.ListaJugadores.executor&quot;: &quot;Run&quot;,
+-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;C:/Users/adri_/Downloads/mysql-connector-j-8.3.0/mysql-connector-j-8.3.0/mysql-connector-j-8.3.0.jar&quot;,
+-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "Application.ListaJugadores.executor": "Run",
++    "RunOnceActivity.OpenProjectViewOnStart": "true",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
++    "git-widget-placeholder": "master",
++    "kotlin-language-version-configured": "true",
++    "last_opened_file_path": "C:/Users/adri_/Downloads/mysql-connector-j-8.3.0/mysql-connector-j-8.3.0/mysql-connector-j-8.3.0.jar",
++    "project.structure.last.edited": "Project",
++    "project.structure.proportion": "0.15",
++    "project.structure.side.proportion": "0.2"
+   }
+-}</component>
++}]]></component>
+   <component name="RunManager">
+     <configuration name="ListaJugadores" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+       <option name="MAIN_CLASS_NAME" value="ListaJugadores" />
+@@ -61,6 +63,7 @@
+   <component name="SharedIndexes">
+     <attachedChunks>
+       <set>
++        <option value="jdk-11.0.22-corretto-11.0.22-4caba194b151-868cef46" />
+         <option value="jdk-22-openjdk-22-3183f394aec4-bad0321e" />
+       </set>
+     </attachedChunks>
+@@ -90,7 +93,15 @@
+       <option name="project" value="LOCAL" />
+       <updated>1712748279205</updated>
+     </task>
+-    <option name="localTasksCounter" value="3" />
++    <task id="LOCAL-00003" summary="ahora funciona modificar">
++      <option name="closed" value="true" />
++      <created>1712773939998</created>
++      <option name="number" value="00003" />
++      <option name="presentableId" value="LOCAL-00003" />
++      <option name="project" value="LOCAL" />
++      <updated>1712773939998</updated>
++    </task>
++    <option name="localTasksCounter" value="4" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
+@@ -108,6 +119,7 @@
+     <MESSAGE value="1r commit" />
+     <MESSAGE value="Primer commit" />
+     <MESSAGE value="Commit desde casa, falta arreglar modificar jugador y terminar volcado desde .dat" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Commit desde casa, falta arreglar modificar jugador y terminar volcado desde .dat" />
++    <MESSAGE value="ahora funciona modificar" />
++    <option name="LAST_COMMIT_MESSAGE" value="ahora funciona modificar" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_21\" default=\"true\" project-jdk-name=\"21\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/out\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision a354bf5eac755855faaa331ba403bd56de4123e4)
++++ b/.idea/misc.xml	(date 1712841419839)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="21" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" default="true" project-jdk-name="openjdk-22" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/out" />
+   </component>
+ </project>
+\ No newline at end of file

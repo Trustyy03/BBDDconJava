@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 public class Test {
 
-    static java.sql.Connection con = DBConnection.getConnection("jdbc:mysql://localhost:33060/demo", "chris", "secret");
+    static java.sql.Connection con = DBConnection.getConnection("jdbc:mysql://79.117.64.230:33060/demo", "chris", "secret");
 
     public Test(){
 
